@@ -10,43 +10,45 @@
     };
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    ags,
-  }: let
-    system = "x86_64-linux";
-    pkgs = nixpkgs.legacyPackages.${system};
-  in {
-    packages.${system} = {
-      default = ags.lib.bundle {
-        inherit pkgs;
-        src = ./.;
-        name = "my-shell";
-        entry = "app.ts";
+  outputs =
+    {
+      self,
+      nixpkgs,
+      ags,
+    }:
+    let
+      system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
+    in
+    {
+      packages.${system} = {
+        default = ags.lib.bundle {
+          inherit pkgs;
+          src = ./.;
+          name = "datni";
+          entry = "app.ts";
 
-        # additional libraries and executables to add to gjs' runtime
-        extraPackages = [
-          # ags.packages.${system}.battery
-          # pkgs.fzf
-        ];
+          # additional libraries and executables to add to gjs' runtime
+          extraPackages = [
+            ags.packages.${system}.agsFull
+          ];
+        };
+      };
+
+      devShells.${system} = {
+        default = pkgs.mkShell {
+          buildInputs = [
+            # includes all Astal libraries
+            ags.packages.${system}.agsFull
+
+            # includes astal3 astal4 astal-io by default
+            (ags.packages.${system}.default.override {
+              extraPackages = [
+                # cherry pick packages
+              ];
+            })
+          ];
+        };
       };
     };
-
-    devShells.${system} = {
-      default = pkgs.mkShell {
-        buildInputs = [
-          # includes all Astal libraries
-          # ags.packages.${system}.agsFull
-
-          # includes astal3 astal4 astal-io by default
-          (ags.packages.${system}.default.override {
-            extraPackages = [
-              # cherry pick packages
-            ];
-          })
-        ];
-      };
-    };
-  };
 }
