@@ -5,7 +5,7 @@
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
 
     ags = {
-      url = "github:aylur/ags";
+      url = "github:aylur/ags/bb963edccb61be0f40cb8767ab2bf45324fff3f3";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
